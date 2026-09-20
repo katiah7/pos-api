@@ -1,23 +1,28 @@
 from datetime import datetime
+
 from pydantic import BaseModel, ConfigDict
+
+from schemas.common import Money
+
 
 class ReceiptBase(BaseModel):
     sale_id: int
     receipt_number: str
-    issue_date: datetime
-    total_amount: float
+    total_amount: Money
+
 
 class ReceiptCreate(ReceiptBase):
     pass
 
+
 class ReceiptUpdate(BaseModel):
+    sale_id: int | None = None
     receipt_number: str | None = None
-    issue_date: datetime | None = None
-    total_amount: float | None = None
+    total_amount: Money | None = None
 
-class ReceiptResponse(ReceiptBase):
+
+class ReceiptRead(ReceiptBase):
+    model_config = ConfigDict(from_attributes=True)
+
     receipt_id: int
-
-    model_config = ConfigDict(
-        from_attributes=True
-    )
+    issue_date: datetime

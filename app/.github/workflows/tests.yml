@@ -1,0 +1,30 @@
+name: Tests
+
+# Run on every push and whenever a pull request is opened, updated or reopened.
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # No .env file or secrets are needed: the tests use an in-memory SQLite
+      # database and set their own throw-away settings (see tests/conftest.py).
+      - name: Run the test suite
+        run: pytest

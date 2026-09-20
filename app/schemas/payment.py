@@ -1,25 +1,33 @@
 from datetime import datetime
+from typing import Literal
+
 from pydantic import BaseModel, ConfigDict
+
+from schemas.common import Money
+
+PaymentMethod = Literal["cash", "mpesa", "card", "crypto"]
+
 
 class PaymentBase(BaseModel):
     sale_id: int
-    payment_method: str
-    amount_paid: float
-    payment_date: datetime
+    payment_method: PaymentMethod
+    amount_paid: Money
     transaction_reference: str
+
 
 class PaymentCreate(PaymentBase):
     pass
 
+
 class PaymentUpdate(BaseModel):
-    payment_method: str | None = None
-    amount_paid: float | None = None
-    payment_date: datetime | None = None
+    sale_id: int | None = None
+    payment_method: PaymentMethod | None = None
+    amount_paid: Money | None = None
     transaction_reference: str | None = None
 
-class PaymentResponse(PaymentBase):
-    payment_id: int
 
-    model_config = ConfigDict(
-        from_attributes=True
-    )
+class PaymentRead(PaymentBase):
+    model_config = ConfigDict(from_attributes=True)
+
+    payment_id: int
+    payment_date: datetime

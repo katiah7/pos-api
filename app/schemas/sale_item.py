@@ -1,22 +1,28 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
+
+from schemas.common import Money
+
 
 class SaleItemBase(BaseModel):
     sale_id: int
     product_id: int
-    quantity: int
-    unit_price: float
-    subtotal: float
+    quantity: int = Field(gt=0)
+
 
 class SaleItemCreate(SaleItemBase):
-    pass
+    unit_price: Money | None = None
+
 
 class SaleItemUpdate(BaseModel):
-    quantity: int | None = None
-    unit_price: float | None = None
-    subtotal: float | None = None
+    sale_id: int | None = None
+    product_id: int | None = None
+    quantity: int | None = Field(default=None, gt=0)
+    unit_price: Money | None = None
 
-class SaleItemResponse(SaleItemBase):
+
+class SaleItemRead(SaleItemBase):
+    model_config = ConfigDict(from_attributes=True)
+
     sale_item_id: int
-    model_config = ConfigDict(
-        from_attributes=True
-    )
+    unit_price: Money
+    subtotal: Money

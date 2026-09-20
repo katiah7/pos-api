@@ -7,7 +7,7 @@ from app.database import Base
 class Supplier(Base):
     __tablename__ = "suppliers"
 
-    supplier_id = Column(Integer, primary_key=True)
+    supplier_id = Column(Integer, primary_key=True, index=True)
     supplier_name = Column(String, nullable=False)
     contact_person = Column(String, nullable=False)
     phone = Column(String, nullable=False)

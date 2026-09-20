@@ -1,26 +1,33 @@
 from datetime import datetime
+from typing import Literal
+
 from pydantic import BaseModel, ConfigDict
+
+from schemas.common import Money
+
+PaymentStatus = Literal["paid", "unpaid"]
+
 
 class SaleBase(BaseModel):
     customer_id: int
     user_id: int
-    sale_date: datetime
-    total_amount: float
-    payment_status: str
+    total_amount: Money
+    payment_status: PaymentStatus = "unpaid"
+
 
 class SaleCreate(SaleBase):
     pass
 
+
 class SaleUpdate(BaseModel):
     customer_id: int | None = None
     user_id: int | None = None
-    sale_date: datetime | None = None
-    total_amount: float | None = None
-    payment_status: str | None = None
+    total_amount: Money | None = None
+    payment_status: PaymentStatus | None = None
 
-class SaleResponse(SaleBase):
+
+class SaleRead(SaleBase):
+    model_config = ConfigDict(from_attributes=True)
+
     sale_id: int
-
-    model_config = ConfigDict(
-        from_attributes=True
-    )
+    sale_date: datetime

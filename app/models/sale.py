@@ -1,27 +1,26 @@
-from sqlalchemy import (
-    Column, 
-    DateTime, 
-    ForeignKey, 
-    Integer, 
-    Numeric, 
-    String, 
-)
-
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, Numeric, String
 from sqlalchemy.orm import relationship
-from database import Base
+from sqlalchemy.sql import func
+
+from app.database import Base
+
 
 class Sale(Base):
-    __tablename__="sales"
+    __tablename__ = "sales"
 
-    sale_id = Column(Integer, primary_key=True)
+    sale_id = Column(Integer, primary_key=True, index=True)
     customer_id = Column(Integer, ForeignKey("customers.customer_id"), nullable=False)
     user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
-    sale_date = Column(DateTime, nullable=False)
-    total_amount = Column(Numeric(10,2), nullable=False)
-    payment_status = Column(String, nullable=False)
-    customer = relationship("Customer", back_populates="sales")
+    sale_date = Column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    total_amount = Column(Numeric(10, 2), nullable=False)
+    payment_status = Column(String, nullable=False, default="unpaid")  # "paid" / "unpaid"
 
+    customer = relationship("Customer", back_populates="sales")
     user = relationship("User", back_populates="sales")
-    items = relationship("SaleItem", back_populates="sale")
+
+    items = relationship(
+        "SaleItem", back_populates="sale", cascade="all, delete-orphan"
+    )
+   
     payment = relationship("Payment", back_populates="sale", uselist=False)
     receipt = relationship("Receipt", back_populates="sale", uselist=False)
